@@ -13,11 +13,11 @@ async function main() {
       Book: {
         create: [
           {
-            title: "Prisma Seed",
+            title: "Prisma Seed 1",
             body: "jgjhghjg",
           },
           {
-            title: "Prisma Seed",
+            title: "Prisma Seed 2",
             body: "ghdhgdfg",
           },
         ],
@@ -25,7 +25,29 @@ async function main() {
     },
   });
 
-  console.log({ alice });
+  const bob = await prisma.user.upsert({
+    where: { email: "bob@gmail.com" },
+    update: {},
+    create: {
+      email: "bob@gmail.com",
+      name: "BOB",
+      password: "test123",
+      Book: {
+        create: [
+          {
+            title: "Prisma Seed 3",
+            body: "jgjhghjg",
+          },
+          {
+            title: "Prisma Seed 4",
+            body: "ghdhgdfg",
+          },
+        ],
+      },
+    },
+  });
+
+  console.log({ alice, bob });
 }
 main()
   .then(async () => {

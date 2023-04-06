@@ -7,7 +7,7 @@ export function registerValidation(
   next: NextFunction
 ) {
   const error = validationResult(req);
-  if (!error.isEmpty()) {
+  if (error.isEmpty()) {
     return res.status(400).json({ error: error.array() });
   }
 

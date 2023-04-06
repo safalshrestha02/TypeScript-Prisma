@@ -6,6 +6,12 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+interface createUser {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export async function register(
   req: Request,
   res: Response,
@@ -15,13 +21,16 @@ export async function register(
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const data: createUser = {
+      name,
+      email,
+      password: hashedPassword,
+    };
+
     const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
+      data,
     });
+
     res.status(201).json({ user });
   } catch (error) {
     res.status(201).json(error);
