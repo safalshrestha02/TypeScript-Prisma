@@ -1,10 +1,7 @@
-import { User } from "./User.model";
-
 export interface Book {
   id: number;
-  title: String;
-  author: User[];
+  title: string;
   userId: number;
-  body: String;
+  body: string;
   createdAt: Date;
 }

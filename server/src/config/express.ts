@@ -1,13 +1,15 @@
-import express from "express";
 import bodyParser from "body-parser";
+import express from "express";
 
-import router from "../routes/v1/index";
+import routes from "../routes/v1/index";
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.listen(3000, () => console.log("server running on port 3000"));
+app.get("/", (req, res) => res.send("ehehe"));
 
-app.use(router);
+app.use(routes);
+
+app.listen(3000, () => console.log("server running on port 3000"));

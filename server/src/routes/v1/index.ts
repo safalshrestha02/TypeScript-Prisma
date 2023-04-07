@@ -1,7 +1,8 @@
 import { Router } from "express";
-const router = Router();
 import auth from "./routes"
 import addBook from "./routes"
+
+const router = Router();
 
 router.use("/api", auth);
 router.use("/api/book", addBook);
