@@ -4,11 +4,14 @@ import {
   login,
   getAllUser,
   getAllBooks,
+  activeUser,
 } from "../../controller/authController";
 import { addBook } from "../../controller/bookController";
 import { registerSchema } from "../../utils/registerValidator";
 import { registerValidation } from "../../middleware/checkEmail";
 import { searchPaginationSortMiddleware } from "../../middleware/pagination";
+
+import verifyJWT from "../../middleware/verifyJWT";
 
 const router = Router();
 
@@ -26,6 +29,7 @@ router.post("/register", registerSchema, registerValidation, register);
 
 router.post("/login", login);
 
-router.post("/addBook", addBook);
+router.post("/addBook", verifyJWT, addBook);
+router.post("/me", verifyJWT, activeUser);
 
 export default router;
