@@ -3,10 +3,9 @@ import {
   register,
   login,
   getAllUser,
-  getAllBooks,
   activeUser,
 } from "../../controller/authController";
-import { addBook } from "../../controller/bookController";
+import { addBook, getAllBooks } from "../../controller/bookController";
 import { registerSchema } from "../../utils/registerValidator";
 import { registerValidation } from "../../middleware/checkEmail";
 import { searchPaginationSortMiddleware } from "../../middleware/pagination";
@@ -23,7 +22,14 @@ router.get(
   }),
   getAllUser
 );
-router.get("/books", getAllBooks);
+router.get(
+  "/books",
+  searchPaginationSortMiddleware({
+    model: "Book",
+    searchableFields: ["name", "email"],
+  }),
+  getAllBooks
+);
 
 router.post("/register", registerSchema, registerValidation, register);
 

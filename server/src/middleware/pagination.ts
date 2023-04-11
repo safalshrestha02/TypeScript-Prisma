@@ -8,11 +8,6 @@ interface SearchPaginationSortOptions {
   searchableFields: Array<keyof User>;
 }
 
-// interface SearchPaginationSortOptions {
-//   model: "user" | "post";
-//   searchableFields: Array<keyof User>;
-// }
-
 interface SearchPaginationSortArgs {
   search?: string;
   page?: number;
@@ -25,14 +20,6 @@ type UserOrderByInput = {
   id?: "asc" | "desc";
   name?: "asc" | "desc";
 };
-
-// interface Model {
-//   model: "user" | "post";
-// }
-
-// interface SearchableFields {
-//   searchableFields: Array<keyof User>;
-// }
 
 export const searchPaginationSortMiddleware = ({
   model,
@@ -48,20 +35,16 @@ export const searchPaginationSortMiddleware = ({
         order = "asc",
       } = req.query as SearchPaginationSortArgs;
 
-      // const count = await prisma.user.count();
-
       const pageNum = Number(page);
       const limitNum = Number(limit);
       const skip = (pageNum - 1) * limitNum;
 
       const orderBy: UserOrderByInput = { [sort]: order };
 
-      const lowercase = model.toLowerCase();
-
-      // console.log(totalPages);
+      const modelName = model.toLowerCase();
 
       if (!search) {
-        const allRecords = await (prisma as any)[lowercase].findMany({
+        const allRecords = await (prisma as any)[modelName].findMany({
           orderBy,
           skip,
           take: limitNum,
@@ -75,9 +58,7 @@ export const searchPaginationSortMiddleware = ({
         [field]: { contains: search, mode: "insensitive" },
       }));
 
-      // const totalCount = await (prisma as any)[lowercase].count(countQuery);
-
-      const searchedRecords = await (prisma as any)[lowercase].findMany({
+      const searchedRecords = await (prisma as any)[modelName].findMany({
         where: {
           OR: searchQueries,
         },
@@ -86,7 +67,7 @@ export const searchPaginationSortMiddleware = ({
         take: limitNum,
       });
 
-      const totalFound = await (prisma as any)[lowercase].findMany({
+      const totalFound = await (prisma as any)[modelName].findMany({
         where: {
           OR: searchQueries,
         },

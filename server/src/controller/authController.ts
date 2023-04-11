@@ -44,16 +44,6 @@ export const getAllUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getAllBooks: RequestHandler = async (_req, res, next) => {
-  try {
-    const allBooks = await prisma.book.findMany();
-
-    res.status(201).json({ allBooks });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const register: RequestHandler = async (req, res, next) => {
   const { name, email, password }: User = req.body;
 
@@ -81,7 +71,10 @@ export const register: RequestHandler = async (req, res, next) => {
 
     res.status(201).json({ user });
   } catch (error) {
-    next(error);
+    let message;
+    if (error instanceof Error) message = error.message;
+    else message = String(error);
+    res.status(400).json({ success: false, message });
   }
 };
 
@@ -99,11 +92,6 @@ export const login: RequestHandler = async (req, res, next) => {
 
     const signedToken = jwt.sign({ user }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
-    });
-
-    res.cookie("jwt", signedToken, {
-      // httpOnly: true,
-      maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({ loggedIn: user, token: signedToken });

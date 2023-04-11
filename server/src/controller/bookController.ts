@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function addBook(req: Request, res: Response, next: NextFunction) {
+export const addBook: RequestHandler = async (req, res, next) => {
   const { title, body, userId } = req.body;
   try {
     const book = await prisma.book.create({
@@ -17,4 +17,16 @@ export async function addBook(req: Request, res: Response, next: NextFunction) {
   } catch (error) {
     res.status(201).json(error);
   }
-}
+};
+
+export const getAllBooks: RequestHandler = async (_req, res, next) => {
+  try {
+    const books = res.locals.data;
+    const currentPage = res.locals.currentPage;
+    const totalPages = res.locals.totalPages;
+    const found = res.locals.found;
+    res.json({ books, currentPage, totalPages, found });
+  } catch (error) {
+    next(error);
+  }
+};
