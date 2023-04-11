@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { Prisma, PrismaClient, User } from "@prisma/client";
+import { Book } from "../model/Book.model";
 
 const prisma = new PrismaClient();
 
 interface SearchPaginationSortOptions {
   model: Prisma.ModelName;
-  searchableFields: Array<keyof User>;
+  searchableFields: Array<keyof User> | Array<keyof Book>;
 }
 
 interface SearchPaginationSortArgs {
@@ -19,6 +20,8 @@ interface SearchPaginationSortArgs {
 type UserOrderByInput = {
   id?: "asc" | "desc";
   name?: "asc" | "desc";
+  email?: "asc" | "desc";
+  title?: "asc" | "desc";
 };
 
 export const searchPaginationSortMiddleware = ({

@@ -26,7 +26,7 @@ router.get(
   "/books",
   searchPaginationSortMiddleware({
     model: "Book",
-    searchableFields: ["name", "email"],
+    searchableFields: ["title", "body"],
   }),
   getAllBooks
 );
