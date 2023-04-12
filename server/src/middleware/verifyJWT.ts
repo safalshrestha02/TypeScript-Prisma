@@ -1,8 +1,11 @@
+import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
+const prisma = new PrismaClient();
+
 type UserPayload = {
-  email: string;
+  id: string;
 };
 
 declare global {
@@ -30,10 +33,10 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const payload = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    ) as unknown as UserPayload;
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+
+    // const user = await prisma.user.findUnique({ where: {id: decoded.id}})
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
 
     req.currentUser = payload;
 

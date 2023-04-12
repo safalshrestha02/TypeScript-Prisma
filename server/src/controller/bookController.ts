@@ -4,13 +4,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const addBook: RequestHandler = async (req, res, next) => {
-  const { title, body, userId } = req.body;
+  const { title, body } = req.body;
+  const { id } = req.params;
   try {
     const book = await prisma.book.create({
       data: {
         title,
         body,
-        userId,
+        userId: id,
       },
     });
     res.status(201).json({ book });

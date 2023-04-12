@@ -30,6 +30,7 @@ export const searchPaginationSortMiddleware = ({
 }: SearchPaginationSortOptions) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { id } = req.params;
       const {
         search = "",
         page = 1,
@@ -46,12 +47,15 @@ export const searchPaginationSortMiddleware = ({
 
       if (!search) {
         const allRecords = await (prisma as any)[modelName].findMany({
+          where: { userID: id },
           orderBy,
           skip,
           take: limitNum,
         });
 
-        const totalFound = await (prisma as any)[modelName].findMany();
+        const totalFound = await (prisma as any)[modelName].findMany({
+          where: { userID: id },
+        });
         const found = totalFound.length;
         const totalPages = Math.ceil(found / limitNum);
 

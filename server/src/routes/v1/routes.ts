@@ -33,7 +33,7 @@ router.get(
 
 router.post("/register", registerSchema, registerValidation, register);
 router.post("/login", login);
-router.post("/addBook", verifyJWT, addBook);
+router.post("/addBook/:id", verifyJWT, addBook);
 router.post("/me", verifyJWT, activeUser);
 
 export default router;

@@ -4,33 +4,12 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { User } from "../model/User.model";
 
-import HttpException from "../model/error";
-
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const prisma = new PrismaClient();
-
-const checkUserUniqueness = async (email: string) => {
-  const existingUserByEmail = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (existingUserByEmail) {
-    throw new HttpException({
-      errors: {
-        ...(existingUserByEmail ? { email: ["has already been taken"] } : {}),
-      },
-    });
-  }
-};
 
 export const getAllUser: RequestHandler = async (req, res, next) => {
   try {
@@ -51,15 +30,23 @@ export const register: RequestHandler = async (req, res, next) => {
   const { name, email, password }: User = req.body;
 
   if (!email) {
-    throw new HttpException({ errors: { email: ["can't be blank"] } });
+    throw new Error("can't be blank");
   }
 
   if (!password) {
-    throw new HttpException({ errors: { password: ["can't be blank"] } });
+    throw new Error("can't be blank");
   }
 
   try {
-    await checkUserUniqueness(email);
+    const alreadyExistUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!alreadyExistUser) {
+      throw new Error("Username or password invalid");
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -97,6 +84,11 @@ export const login: RequestHandler = async (req, res, next) => {
       expiresIn: "1d",
     });
 
+    res.cookie("jwt", signedToken, {
+      httpOnly: true,
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(201).json({ loggedIn: user, token: signedToken });
   } catch (error) {
     let message;
@@ -108,6 +100,7 @@ export const login: RequestHandler = async (req, res, next) => {
 
 export const activeUser: RequestHandler = async (req, res, next) => {
   try {
+    // const active = prisma.user.findUnique(req.currentUser);
     return res.status(200).json({ success: true, data: req.currentUser });
   } catch (error) {
     let message;
