@@ -61,10 +61,7 @@ export const register: RequestHandler = async (req, res, next) => {
 
     res.status(201).json({ user });
   } catch (error) {
-    let message;
-    if (error instanceof Error) message = error.message;
-    else message = String(error);
-    res.status(400).json({ success: false, message });
+    res.status(400).json({ success: false, message: "email already exists" });
   }
 };
 
