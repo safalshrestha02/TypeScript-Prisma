@@ -41,9 +41,7 @@ export const searchPaginationSortMiddleware = ({
       const pageNum = Number(page);
       const limitNum = Number(limit);
       const skip = (pageNum - 1) * limitNum;
-
       const orderBy: UserOrderByInput = { [sort]: order };
-
       const modelName = model.toLowerCase();
 
       if (!search) {
@@ -53,7 +51,15 @@ export const searchPaginationSortMiddleware = ({
           take: limitNum,
         });
 
-        res.locals.data = { allRecords };
+        const totalFound = await (prisma as any)[modelName].findMany();
+        const found = totalFound.length;
+        const totalPages = Math.ceil(found / limitNum);
+
+        res.locals.data = allRecords;
+        res.locals.totalPages = totalPages;
+        res.locals.currentPage = pageNum;
+        res.locals.found = found;
+
         return next();
       }
 
@@ -83,10 +89,13 @@ export const searchPaginationSortMiddleware = ({
       res.locals.currentPage = pageNum;
       res.locals.totalPages = totalPages;
       res.locals.found = found;
+
       return next();
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "Internal server error" });
+      let message;
+      if (error instanceof Error) message = error.message;
+      else message = String(error);
+      res.status(400).json({ success: false, message });
     }
   };
 };

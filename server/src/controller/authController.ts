@@ -40,7 +40,10 @@ export const getAllUser: RequestHandler = async (req, res, next) => {
     const found = res.locals.found;
     res.json({ users, currentPage, totalPages, found });
   } catch (error) {
-    next(error);
+    let message;
+    if (error instanceof Error) message = error.message;
+    else message = String(error);
+    res.status(400).json({ success: false, message });
   }
 };
 
@@ -107,6 +110,9 @@ export const activeUser: RequestHandler = async (req, res, next) => {
   try {
     return res.status(200).json({ success: true, data: req.currentUser });
   } catch (error) {
-    next(error);
+    let message;
+    if (error instanceof Error) message = error.message;
+    else message = String(error);
+    res.status(400).json({ success: false, message });
   }
 };

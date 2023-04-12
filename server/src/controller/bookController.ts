@@ -15,7 +15,10 @@ export const addBook: RequestHandler = async (req, res, next) => {
     });
     res.status(201).json({ book });
   } catch (error) {
-    res.status(201).json(error);
+    let message;
+    if (error instanceof Error) message = error.message;
+    else message = String(error);
+    res.status(400).json({ success: false, message });
   }
 };
 
@@ -27,6 +30,9 @@ export const getAllBooks: RequestHandler = async (_req, res, next) => {
     const found = res.locals.found;
     res.json({ books, currentPage, totalPages, found });
   } catch (error) {
-    next(error);
+    let message;
+    if (error instanceof Error) message = error.message;
+    else message = String(error);
+    res.status(400).json({ success: false, message });
   }
 };
