@@ -9,8 +9,8 @@ import { addBook, getAllBooks } from "../../controller/bookController";
 import { registerSchema } from "../../utils/registerValidator";
 import { registerValidation } from "../../middleware/checkEmail";
 import { searchPaginationSortMiddleware } from "../../middleware/pagination";
-
 import verifyJWT from "../../middleware/verifyJWT";
+// import { checkUserRole } from "../../middleware/verifyRole";
 
 const router = Router();
 

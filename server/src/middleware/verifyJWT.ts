@@ -22,6 +22,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
     if (payload) {
       res.locals.user = payload;
+      res.locals.user.role = payload;
     }
 
     next();

@@ -27,17 +27,13 @@ export const getAllUser: RequestHandler = async (req, res, next) => {
 };
 
 export const register: RequestHandler = async (req, res, next) => {
-  const { name, email, password, role }: User = req.body;
-
-  if (!email) {
-    throw new Error("can't be blank");
-  }
-
-  if (!password) {
-    throw new Error("can't be blank");
-  }
-
   try {
+    const { name, email, password, role }: User = req.body;
+
+    if (!email || !password) {
+      throw new Error("can't be blank");
+    }
+
     const checkUser = await prisma.user.findUnique({
       where: {
         email,
@@ -75,11 +71,6 @@ export const login: RequestHandler = async (req, res, next) => {
 
     const signedToken = jwt.sign(user, process.env.JWT_SECRET!, {
       expiresIn: "1d",
-    });
-
-    res.cookie("jwt", signedToken, {
-      httpOnly: true,
-      maxAge: 2 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({ loggedIn: user, token: signedToken });
