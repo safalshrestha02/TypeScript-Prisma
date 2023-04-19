@@ -1,18 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-type UserPayload = {
-  id: string;
-};
-
-declare global {
-  namespace Express {
-    interface Request {
-      currentUser?: UserPayload;
-    }
-  }
-}
-
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     let token;
@@ -30,9 +18,11 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       res.status(401).json({ Message: "no token" });
     }
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!);
 
-    req.currentUser = payload;
+    if (payload) {
+      res.locals.user = payload;
+    }
 
     next();
   } catch (error) {
